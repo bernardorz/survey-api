@@ -1,9 +1,12 @@
 import { SignUpController } from './signup-controller'
 import { MissingParamError, InvalidParamError, ServerError } from '../errors/'
 import { EmailValidator } from '../protocols'
+import { AddAcount, AddAcountModel } from '../../domain/usecases/add-account'
+import { AccountModel } from '../../domain/models/account'
 interface SutTypes {
   sut: SignUpController
   emailValidatorStub: EmailValidator
+  addAcountStub: AddAcount
 }
 
 const makeEmailValidator = (): EmailValidator => {
@@ -16,15 +19,34 @@ const makeEmailValidator = (): EmailValidator => {
   return emailValidatorStub
 }
 
+const makeAddAcount = (): AddAcount => {
+  class AddAcountStub implements AddAcount{
+    add(account: AddAcountModel): AccountModel{
+      const fakeAccount = {
+        id: 'valid_id',
+        name: 'valid_name',
+        email: 'valid_email@email.com',
+        password: 'valid_password'
+      }
+      return fakeAccount
+    }
+  }
+
+  return new AddAcountStub()
+}
+
 const makeSut = (): SutTypes => {
 
   const emailValidatorStub = makeEmailValidator()
-  const sut = new SignUpController(emailValidatorStub)
+  const addAcountStub = makeAddAcount()
+  const sut = new SignUpController(emailValidatorStub, addAcountStub)
   return {
     sut,
-    emailValidatorStub
+    emailValidatorStub,
+    addAcountStub
   }
 }
+
 describe('SignUp Controller', () => {
   test('Should reutrn 400 if no name is provider', () => {
     const { sut } = makeSut()
@@ -151,5 +173,26 @@ describe('SignUp Controller', () => {
     expect(validateEmail).toHaveBeenCalled()
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
+  })
+
+  test('Should call AddAccount with correct values', () => {
+
+    const { sut,addAcountStub, emailValidatorStub } = makeSut()
+    const isValidSpy = jest.spyOn(addAcountStub, 'add')
+    const httpRequest = {
+      body: {
+        name: 'valid_name',
+        email: 'valid_email@email.com',
+        password: 'valid_password',
+        passwordConfirmation: 'valid_password'
+      }
+    }
+    sut.handle(httpRequest)
+
+    expect(isValidSpy).toHaveBeenCalledWith({
+      name: 'valid_name',
+      email: 'valid_email@email.com',
+      password: 'valid_password'
+    })
   })
 })
