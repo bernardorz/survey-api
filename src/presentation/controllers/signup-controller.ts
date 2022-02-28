@@ -1,5 +1,5 @@
 import { Controller, EmailValidator, HttpRequest, HttpResponse } from 'presentation/protocols'
-import { BadRequest } from '../helpers/http-helper'
+import { badRequest, serverError } from '../helpers/http-helper'
 import { MissingParamError, InvalidParamError, ServerError } from '../errors'
 
 export class SignUpController implements Controller {
@@ -10,22 +10,19 @@ export class SignUpController implements Controller {
 
       for (const field of requiredFields) {
         if (!httpRequest.body[field]) {
-          return BadRequest(new MissingParamError(field))
+          return badRequest(new MissingParamError(field))
         }
 
         const emailIsValid = this.emailValidator.isValid(httpRequest.body.email)
 
         if (!emailIsValid) {
-          return BadRequest(new InvalidParamError('email'))
+          return badRequest(new InvalidParamError('email'))
         }
       }
 
       return {} as HttpResponse
     } catch (error) {
-      return {
-        statusCode: 500,
-        body: new ServerError()
-      }
+      return serverError()
     }
   }
 }
