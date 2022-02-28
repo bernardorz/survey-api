@@ -177,7 +177,7 @@ describe('SignUp Controller', () => {
   test('Should call AddAccount with correct values', () => {
 
     const { sut, addAcountStub } = makeSut()
-    const isValidSpy = jest.spyOn(addAcountStub, 'add')
+    const addAcount = jest.spyOn(addAcountStub, 'add')
     const httpRequest = {
       body: {
         name: 'valid_name',
@@ -188,10 +188,29 @@ describe('SignUp Controller', () => {
     }
     sut.handle(httpRequest)
 
-    expect(isValidSpy).toHaveBeenCalledWith({
+    expect(addAcount).toHaveBeenCalledWith({
       name: 'valid_name',
       email: 'valid_email@email.com',
       password: 'valid_password'
     })
+  })
+
+  test('Should reutrn 500 if AddAcount throws', () => {
+    const { sut, addAcountStub } = makeSut()
+    const addAcount = jest.spyOn(addAcountStub, 'add').mockImplementation(() => {
+      throw new Error()
+    })
+    const httpRequest = {
+      body: {
+        name: 'valid_name',
+        email: 'valid_email@email.com',
+        password: 'valid_password',
+        passwordConfirmation: 'valid_password'
+      }
+    }
+   const httpResponse = sut.handle(httpRequest)
+
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
   })
 })
