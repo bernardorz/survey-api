@@ -10,6 +10,7 @@
     }
   },
   "scripts": {
+    "start": "tsnd --transpile-only --ignore-watch node_modules src/main/server.ts",
     "test": "jest --passWithNoTests --silent --noStackTrace --runInBand",
     "test:verbose": "jest --passWithNoTests --runInBand",
     "test:unit": "npm test -- --watch -c jest-unit.config.js",
@@ -23,6 +24,7 @@
   "devDependencies": {
     "@shelf/jest-mongodb": "^2.2.0",
     "@types/bcrypt": "^5.0.0",
+    "@types/express": "^4.17.13",
     "@types/jest": "^27.4.1",
     "@types/mongodb": "^3.6.20",
     "@types/node": "^17.0.21",
@@ -42,7 +44,9 @@
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
+    "express": "^4.17.3",
     "mongodb": "^3.7.3",
+    "ts-node-dev": "^1.1.8",
     "validator": "^13.7.0"
   }
 }
