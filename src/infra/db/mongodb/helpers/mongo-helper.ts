@@ -5,6 +5,7 @@ export const MongoHelper = {
   uri: null,
 
   async connect (uri: string): Promise<void> {
+    console.log(uri)
     this.uri = uri
     this.client = await MongoClient.connect(uri, {
       useUnifiedTopology: true
