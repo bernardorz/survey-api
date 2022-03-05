@@ -1,6 +1,6 @@
 import { SignUpController } from './signup-controller'
 import { MissingParamError, InvalidParamError, ServerError } from '../../errors'
-import { EmailValidator, AccountModel, AddAcount, AddAcountModel } from './signup-protocols'
+import { EmailValidator, AccountModel, AddAcount, AddAcountModel, HttpRequest } from './signup-protocols'
 
 interface SutTypes {
   sut: SignUpController
@@ -8,6 +8,16 @@ interface SutTypes {
   addAcountStub: AddAcount
 }
 
+const makeHttpRequest =(): HttpRequest => {
+  return {
+    body : {
+      name: 'any_name',
+      email: 'any_email@email.com',
+      password: 'any_password',
+      passwordConfirmation: 'invalid_password'
+    }
+  }
+}
 const makeEmailValidator = (): EmailValidator => {
   class EmailValidatorStub implements EmailValidator {
     isValid(email: string): boolean {
