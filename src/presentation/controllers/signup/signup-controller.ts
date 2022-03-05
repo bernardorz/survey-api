@@ -38,7 +38,7 @@ export class SignUpController implements Controller {
 
       return ok(createAccount)
     } catch (error) {
-      return serverError()
+      return serverError(error)
     }
   }
 }
