@@ -181,7 +181,7 @@ describe('SignUp Controller', () => {
 
     expect(validateEmail).toHaveBeenCalled()
     expect(httpResponse.statusCode).toBe(500)
-    expect(httpResponse.body).toEqual(new ServerError())
+    expect(httpResponse.body).toEqual(new ServerError(null))
   })
 
   test('Should call AddAccount with correct values', async () => {
@@ -222,7 +222,7 @@ describe('SignUp Controller', () => {
 
     expect(addAcount).toHaveBeenCalled()
     expect(httpResponse.statusCode).toBe(500)
-    expect(httpResponse.body).toEqual(new ServerError())
+    expect(httpResponse.body).toEqual(new ServerError(null))
   })
 
   test('Should return 201 if valid data is provided', async () => {
