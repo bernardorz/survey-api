@@ -1,7 +1,8 @@
-import { InvalidParamError, MissingParamError, ServerError } from "../../../presentation/errors"
+import { InvalidParamError, MissingParamError, ServerError, UnauthorizedError } from "../../../presentation/errors"
 import { LoginController } from "./login"
 import { EmailValidator, HttpRequest } from "./login-protocols"
 import {  Authentication } from '../../../domain/usecases/authentication'
+import { unathorized } from '../../helpers/http-helper'
 interface SutTypes{
     sut: LoginController,
     emailValidatorStub: EmailValidator,
@@ -105,5 +106,17 @@ describe('', () => {
 
         expect(authSpy).toHaveBeenCalledWith('any_email@email.com','any_password')
     })
+
+    test('should return 401 if invalid credentials are provided', async () => {
+    const { sut, authenticationStub } = makeSut()
+    jest.spyOn(authenticationStub, 'auth').mockReturnValueOnce(new Promise(resolve => resolve(null)))
+
+        const httpResponse = await sut.handle(makeHttpRequest())
+
+        expect(httpResponse).toEqual(unathorized())
+        expect(httpResponse.statusCode).toBe(401)
+     
+    })
+
     
 })
