@@ -246,4 +246,5 @@ describe('SignUp Controller', () => {
       password: 'valid_password',
     })
   })
+  
 })
