@@ -2,7 +2,7 @@ import { InvalidParamError, MissingParamError, ServerError, UnauthorizedError } 
 import { LoginController } from "./login"
 import { EmailValidator, HttpRequest } from "./login-protocols"
 import { Authentication } from '../../../domain/usecases/authentication'
-import { serverError, unathorized } from '../../helpers/http-helper'
+import { ok, serverError, unathorized } from '../../helpers/http-helper'
 interface SutTypes {
     sut: LoginController,
     emailValidatorStub: EmailValidator,
@@ -130,4 +130,14 @@ describe('', () => {
         expect(httpResponse.statusCode).toBe(500)
     })
 
+
+    test('should return 200 if valid credentials are provided', async () => {
+        const { sut } = makeSut()
+    
+
+        const httpResponse = await sut.handle(makeHttpRequest())
+
+        expect(httpResponse).toEqual(ok({ accessToken: 'any_token'}))
+        expect(httpResponse.statusCode).toBe(200)
+    })
 })
