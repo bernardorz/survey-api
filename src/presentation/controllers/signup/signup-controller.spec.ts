@@ -1,14 +1,15 @@
 import { SignUpController } from './signup-controller'
 import { MissingParamError, InvalidParamError, ServerError } from '../../errors'
-import { EmailValidator, AccountModel, AddAcount, AddAcountModel, HttpRequest } from './signup-protocols'
+import { EmailValidator, AccountModel, AddAcount, AddAcountModel, HttpRequest, Validation } from './signup-protocols'
 
 interface SutTypes {
   sut: SignUpController
   emailValidatorStub: EmailValidator
-  addAcountStub: AddAcount
+  addAcountStub: AddAcount,
+  validationStub: Validation
 }
 
-const makeHttpRequest =(): HttpRequest => {
+const makeHttpRequest = (): HttpRequest => {
   return {
     body : {
       name: 'any_name',
@@ -26,6 +27,16 @@ const makeEmailValidator = (): EmailValidator => {
   }
   const emailValidatorStub = new EmailValidatorStub()
   return emailValidatorStub
+}
+
+const makeValidation = (): Validation => {
+  class ValidationStub implements Validation{
+    validate(input: any): Error {
+      return null
+    }
+  }
+
+  return new ValidationStub()
 }
 
 const makeAddAcount = (): AddAcount => {
@@ -48,11 +59,13 @@ const makeSut = (): SutTypes => {
  
   const emailValidatorStub = makeEmailValidator()
   const addAcountStub = makeAddAcount()
-  const sut = new SignUpController(emailValidatorStub, addAcountStub)
+  const validationStub = makeValidation()
+  const sut = new SignUpController(emailValidatorStub, addAcountStub, validationStub)
   return {
     sut,
     emailValidatorStub,
-    addAcountStub
+    addAcountStub,
+    validationStub
   }
 }
 
@@ -245,6 +258,15 @@ describe('SignUp Controller', () => {
       email: 'valid_email@email.com',
       password: 'valid_password',
     })
+  })
+
+  test('Should call Validation with correct value', async () => {
+    const { sut, emailValidatorStub, validationStub } = makeSut()
+    const validateSpy = jest.spyOn(validationStub, 'validate')
+    const httpRequest = makeHttpRequest()
+    await sut.handle(httpRequest)
+
+    expect(validateSpy).toHaveBeenCalledWith(httpRequest.body)
   })
   
 })
