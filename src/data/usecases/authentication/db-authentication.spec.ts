@@ -3,6 +3,7 @@ import { AuthenticationModel } from "../../../domain/usecases/authentication"
 import { DbAuthentication } from './db-authentication'
 import { AccountModel } from "../add-account/db-add-account-protocols"
 import { HashCompare } from "../../../data/protocols/cryptography/hash-compare-"
+import { rejects } from "assert"
 
 
 
@@ -29,7 +30,7 @@ const makeFakeAuthentication = (): AuthenticationModel => {
     }
 }
 
-const makeFakeAccount= (): AccountModel => {
+const makeFakeAccount = (): AccountModel => {
     return {
         email: 'any_email@email.com',
         password: 'hashed_password',
@@ -43,7 +44,7 @@ interface SutTypes {
     hashedCompareStub: HashCompare
 }
 
-const makeHashCompareStub = (): HashCompare  => {
+const makeHashCompareStub = (): HashCompare => {
     class HashedCompareStub implements HashCompare {
         async compare(value: string, hash: string): Promise<boolean> {
             return new Promise(resolve => resolve(true))
@@ -110,5 +111,16 @@ describe('DbAuthentication UseCase', () => {
         await sut.auth(makeFakeAuthentication())
 
         expect(compare).toHaveBeenCalledWith('any_password', 'hashed_password')
+    })
+
+    test('should throw if HashComparer throws', async () => {
+
+        const { sut, hashedCompareStub } = makeSut()
+        jest.spyOn(hashedCompareStub, 'compare')
+            .mockReturnValueOnce(new Promise((_, reject) => reject(new Error())))
+
+        const promise = sut.auth(makeFakeAuthentication())
+
+        await expect(promise).rejects.toThrow()
     })
 })
