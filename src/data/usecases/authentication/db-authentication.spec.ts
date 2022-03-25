@@ -161,7 +161,7 @@ describe('DbAuthentication UseCase', () => {
     expect(generateSpy).toHaveBeenCalledWith('any_id')
   })
 
-  test('should throw if tokenGeneratorStub throws', async () => {
+  test('should throw if tokenGenerator throws', async () => {
     const { sut, tokenGeneratorStub } = makeSut()
     jest.spyOn(tokenGeneratorStub, 'generate')
       .mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
@@ -171,7 +171,7 @@ describe('DbAuthentication UseCase', () => {
     await expect(promise).rejects.toThrow()
   })
 
-  test('should throw if tokenGeneratorStub throws', async () => {
+  test('should  return acess token if tokenGenerator success', async () => {
     const { sut } = makeSut()
 
     const acessToken = await sut.auth(makeFakeAuthentication())
@@ -187,5 +187,16 @@ describe('DbAuthentication UseCase', () => {
     await sut.auth(makeFakeAuthentication())
 
     expect(updateSpy).toHaveBeenCalledWith('any_id', 'any_token')
+  })
+
+  test('Should throws if UpdateAcessTokenRepository throws', async () => {
+    const { sut, updateAcessTokenRepositoryStub } = makeSut()
+
+    jest.spyOn(updateAcessTokenRepositoryStub, 'update')
+      .mockReturnValueOnce(new Promise((resolve,reject) => reject(new Error())))
+
+    const promise = sut.auth(makeFakeAuthentication())
+
+    await expect(promise).rejects.toThrow()
   })
 })
