@@ -15,7 +15,7 @@ const makeValidation = (): Validation => {
         }
     }
 
-    const validationStub = new ValidationStub();
+    const validationStub = new ValidationStub() 
     return validationStub
 }
 

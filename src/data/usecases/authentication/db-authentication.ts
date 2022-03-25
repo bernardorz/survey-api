@@ -1,5 +1,5 @@
-import { HashCompare } from '../../../data/protocols/cryptography/hash-compare-';
-import { LoadAccountByEmailRepository } from '../../../data/protocols/db/load-account-by-email-repository';
+import { HashCompare } from '../../../data/protocols/cryptography/hash-compare-' 
+import { LoadAccountByEmailRepository } from '../../../data/protocols/db/load-account-by-email-repository' 
 import { Authentication, AuthenticationModel } from '../../../domain/usecases/authentication'
 
 

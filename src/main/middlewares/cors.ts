@@ -1,4 +1,4 @@
-import { Response, Request, NextFunction } from "express";
+import { Response, Request, NextFunction } from "express" 
 
 export const cors = (request: Request, response:Response, next: NextFunction) : void => {
     response.set('acess-control-allow-origin', '*')

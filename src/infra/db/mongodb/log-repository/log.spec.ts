@@ -3,7 +3,7 @@ import { MongoHelper } from '../helpers/mongo-helper'
 import { LoggerMongoRepository } from './log'
 
 const makeSut = () : LoggerMongoRepository => {
-    return new LoggerMongoRepository();
+    return new LoggerMongoRepository() 
 }
 
 describe('Log Mongo Repository', () => {
