@@ -1,4 +1,4 @@
 export default {
-    mongoUrl: global.__MONGO_URI__ || process.env.MONGO_URI,
+    mongoUrl: process.env.MONGO_URL,
     port: process.env.PORT || 3000
 }

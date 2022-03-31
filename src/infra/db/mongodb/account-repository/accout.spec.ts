@@ -6,7 +6,7 @@ let accountCollection: Collection;
 
 describe('Account mongo repository', () => {
   beforeAll(async () => {
-    await MongoHelper.connect(global.__MONGO_URI__)
+    await MongoHelper.connect(process.env.MONGO_URL)
   })
 
   afterAll(async () => {
