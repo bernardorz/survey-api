@@ -55,5 +55,8 @@
     "mongodb": "^3.7.3",
     "ts-node-dev": "^1.1.8",
     "validator": "^13.7.0"
+  },
+  "engines": {
+    "node" : "16.13.2"
   }
 }
