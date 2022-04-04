@@ -11,7 +11,7 @@
   "scripts": {
     "start": "node dist/main/server.js",
     "build": "rimraf dist && tsc",
-    "debug": "nodemon --inspect=0.0.0.0:9222 --nolazy dist/main/server.js",
+    "debug": "tsnd --inspect=0.0.0.0:9222 src/main/server.ts",
     "up": "npm run build && docker-compose up",
     "down": "docker compose down",
     "dev": "tsnd --transpile-only --ignore-watch node_modules src/main/server.ts",
