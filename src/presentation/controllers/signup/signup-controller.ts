@@ -22,7 +22,7 @@ export class SignUpController implements Controller {
         email,
         password
       })
-
+      
       return ok(createAccount)
     } catch (error) {
       return serverError(error)
