@@ -12,7 +12,7 @@ interface SutTypes {
 
 const makeHttpRequest = (): HttpRequest => {
   return {
-    body : {
+    body: {
       name: 'any_name',
       email: 'any_email@email.com',
       password: 'any_password',
@@ -23,16 +23,16 @@ const makeHttpRequest = (): HttpRequest => {
 
 const makeAuthentication = (): Authentication => {
   class AuthenticationStub implements Authentication {
-      async auth(authentication: AuthenticationModel): Promise<string> {
-          return new Promise(resolve => resolve('any_token'))
-      }
+    async auth(authentication: AuthenticationModel): Promise<string> {
+      return new Promise(resolve => resolve('any_token'))
+    }
   }
 
   return new AuthenticationStub()
 }
 
 const makeValidation = (): Validation => {
-  class ValidationStub implements Validation{
+  class ValidationStub implements Validation {
     validate(input: any): Error {
       return null
     }
@@ -58,10 +58,10 @@ const makeAddAcount = (): AddAcount => {
 }
 
 const makeSut = (): SutTypes => {
- 
+
   const addAcountStub = makeAddAcount()
   const validationStub = makeValidation()
-  const authenticationStub  = makeAuthentication()
+  const authenticationStub = makeAuthentication()
   const sut = new SignUpController(addAcountStub, validationStub, authenticationStub)
   return {
     sut,
@@ -71,16 +71,16 @@ const makeSut = (): SutTypes => {
   }
 }
 
-const makeFakeRequest = () : HttpRequest =>{
+const makeFakeRequest = (): HttpRequest => {
   return {
-    body : {
+    body: {
       name: 'valid_name',
       email: 'valid_email@email.com',
       password: 'valid_password',
       passwordConfirmation: 'valid_password'
     }
   }
- }
+}
 
 describe('SignUp Controller', () => {
 
@@ -157,13 +157,34 @@ describe('SignUp Controller', () => {
   })
 
   test('Should call Authentication with correct values', async () => {
-    const { sut, authenticationStub }  = makeSut()
+    const { sut, authenticationStub } = makeSut()
     const authSpy = jest.spyOn(authenticationStub, 'auth')
-    await sut.handle({ body: { email : 'any_email@email.com', password: 'any_password' }})
+    await sut.handle({ body: { email: 'any_email@email.com', password: 'any_password' } })
     expect(authSpy).toHaveBeenCalledWith({
-        email:'any_email@email.com', password: 'any_password'
+      email: 'any_email@email.com', password: 'any_password'
     })
-})
+  })
 
-  
+  test('Should reutrn 500 if Authentication throws', async () => {
+    const { sut, authenticationStub } = makeSut()
+    const authSpy = jest.spyOn(authenticationStub, 'auth').mockImplementation(() => {
+      throw new Error()
+    })
+    const httpRequest = {
+      body: {
+        name: 'valid_name',
+        email: 'valid_email@email.com',
+        password: 'valid_password',
+        passwordConfirmation: 'valid_password'
+      }
+    }
+    const httpResponse = await sut.handle(httpRequest)
+
+    expect(authSpy).toHaveBeenCalled()
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError(null))
+  })
+
+
+
 })
