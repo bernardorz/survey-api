@@ -132,10 +132,7 @@ describe('SignUp Controller', () => {
 
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toEqual({
-      id: 'valid_id',
-      name: 'valid_name',
-      email: 'valid_email@email.com',
-      password: 'valid_password',
+      accessToken: 'any_token'
     })
   })
 
@@ -185,6 +182,15 @@ describe('SignUp Controller', () => {
     expect(httpResponse.body).toEqual(new ServerError(null))
   })
 
+
+  test('Should call Authentication with correct values', async () => {
+    const { sut, authenticationStub } = makeSut()
+    const authSpy = jest.spyOn(authenticationStub, 'auth')
+    await sut.handle({ body: { email: 'any_email@email.com', password: 'any_password' } })
+    expect(authSpy).toHaveBeenCalledWith({
+      email: 'any_email@email.com', password: 'any_password'
+    })
+  })
 
 
 })
