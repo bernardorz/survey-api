@@ -24,12 +24,12 @@ export class SignUpController implements Controller {
         password
       })
       
-      const acessToken = await this.authentication.auth({
+      const accessToken = await this.authentication.auth({
         email,
         password
       })
 
-      return ok(createAccount)
+      return ok({ accessToken })
     } catch (error) {
       return serverError(error)
     }
