@@ -59,6 +59,15 @@ describe('', () => {
 
     })
 
+    test('Should call Authentication with correct values', async () => {
+        const { sut, authenticationStub }  = makeSut()
+        const authSpy = jest.spyOn(authenticationStub, 'auth')
+        await sut.handle({ body: { email : 'any_email@email.com', password: 'any_password' }})
+        expect(authSpy).toHaveBeenCalledWith({
+            email:'any_email@email.com', password: 'any_password'
+        })
+    })
+
 
     test('should return 500 if Authentication throws', async () => {
         const { sut, authenticationStub } = makeSut()

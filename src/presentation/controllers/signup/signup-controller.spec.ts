@@ -2,11 +2,12 @@ import { SignUpController } from './signup-controller'
 import { MissingParamError, InvalidParamError, ServerError } from '../../errors'
 import { AccountModel, AddAcount, AddAcountModel, HttpRequest, Validation } from './signup-controller-protocols'
 import { badRequest } from '../../helpers/http/http-helper'
-
+import { Authentication, AuthenticationModel } from '../../../domain/usecases/authentication'
 interface SutTypes {
   sut: SignUpController
-  addAcountStub: AddAcount,
+  addAcountStub: AddAcount
   validationStub: Validation
+  authenticationStub: Authentication
 }
 
 const makeHttpRequest = (): HttpRequest => {
@@ -18,6 +19,16 @@ const makeHttpRequest = (): HttpRequest => {
       passwordConfirmation: 'invalid_password'
     }
   }
+}
+
+const makeAuthentication = (): Authentication => {
+  class AuthenticationStub implements Authentication {
+      async auth(authentication: AuthenticationModel): Promise<string> {
+          return new Promise(resolve => resolve('any_token'))
+      }
+  }
+
+  return new AuthenticationStub()
 }
 
 const makeValidation = (): Validation => {
@@ -50,11 +61,13 @@ const makeSut = (): SutTypes => {
  
   const addAcountStub = makeAddAcount()
   const validationStub = makeValidation()
-  const sut = new SignUpController(addAcountStub, validationStub)
+  const authenticationStub  = makeAuthentication()
+  const sut = new SignUpController(addAcountStub, validationStub, authenticationStub)
   return {
     sut,
     addAcountStub,
-    validationStub
+    validationStub,
+    authenticationStub
   }
 }
 
@@ -141,6 +154,16 @@ describe('SignUp Controller', () => {
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(badRequest(new MissingParamError('any_field')))
 
-  })  
+  })
+
+  test('Should call Authentication with correct values', async () => {
+    const { sut, authenticationStub }  = makeSut()
+    const authSpy = jest.spyOn(authenticationStub, 'auth')
+    await sut.handle({ body: { email : 'any_email@email.com', password: 'any_password' }})
+    expect(authSpy).toHaveBeenCalledWith({
+        email:'any_email@email.com', password: 'any_password'
+    })
+})
+
   
 })
