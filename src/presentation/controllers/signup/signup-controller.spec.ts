@@ -1,7 +1,7 @@
 import { SignUpController } from './signup-controller'
-import { MissingParamError, InvalidParamError, ServerError } from '../../errors'
+import { MissingParamError, EmailInUseError, ServerError } from '../../errors'
 import { AccountModel, AddAcount, AddAcountModel, HttpRequest, Validation } from './signup-controller-protocols'
-import { badRequest } from '../../helpers/http/http-helper'
+import { badRequest, forbidden} from '../../helpers/http/http-helper'
 import { Authentication, AuthenticationModel } from '../../../domain/usecases/authentication'
 interface SutTypes {
   sut: SignUpController
@@ -110,6 +110,15 @@ describe('SignUp Controller', () => {
     const addAcount = jest.spyOn(addAcountStub, 'add').mockImplementation(() => {
       throw new Error()
     })
+
+    const httpResponse = await sut.handle(makeFakeRequest())
+
+    expect(httpResponse.statusCode).toEqual(500)
+  })
+
+  test('Should return 403 if AddAcount returns null', async () => {
+    const { sut, addAcountStub } = makeSut()
+    const addAcount = jest.spyOn(addAcountStub, 'add').mockImplementation(() => null)
     const httpRequest = {
       body: {
         name: 'valid_name',
@@ -120,9 +129,8 @@ describe('SignUp Controller', () => {
     }
     const httpResponse = await sut.handle(httpRequest)
 
-    expect(addAcount).toHaveBeenCalled()
-    expect(httpResponse.statusCode).toBe(500)
-    expect(httpResponse.body).toEqual(new ServerError(null))
+    // expect(addAcount).toHaveBeenCalled()
+    expect(httpResponse.statusCode).toBe(403)
   })
 
   test('Should return 201 if valid data is provided', async () => {
@@ -182,7 +190,6 @@ describe('SignUp Controller', () => {
     expect(httpResponse.body).toEqual(new ServerError(null))
   })
 
-
   test('Should call Authentication with correct values', async () => {
     const { sut, authenticationStub } = makeSut()
     const authSpy = jest.spyOn(authenticationStub, 'auth')
@@ -191,6 +198,5 @@ describe('SignUp Controller', () => {
       email: 'any_email@email.com', password: 'any_password'
     })
   })
-
 
 })
