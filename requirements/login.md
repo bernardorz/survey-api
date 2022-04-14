@@ -11,7 +11,6 @@
 7. ✅ Retorna **200** com o token de acesso e o nome do usuário
 
 > ## Exceções
-
 1. ✅ Retorna erro **404** se a API não existir
 2. ✅ Retorna erro **400** se email ou password não forem fornecidos pelo client
 3. ✅ Retorna erro **400** se o campo email for um e-mail inválido
