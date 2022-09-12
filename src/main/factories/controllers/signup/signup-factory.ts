@@ -19,7 +19,7 @@ export const makeSignUpController = () : Controller => {
     const bcryptAdapter = new BcryptAdapter(12)
     const jwtAdapter = new JwtAdapter(config.jwtSecret)
     const dbAuthentication = new DbAuthentication(accountDbRepository, bcryptAdapter, jwtAdapter, accountDbRepository)
-    const dbAddAcount = new DbAddAcount(bcryptAdapter, accountDbRepository) 
+    const dbAddAcount = new DbAddAcount(bcryptAdapter, accountDbRepository, accountDbRepository) 
     const signUpController = new SignUpController(dbAddAcount, makeSignUpValidation(), dbAuthentication)
     const loggerMongoRepository = new LoggerMongoRepository() 
     
