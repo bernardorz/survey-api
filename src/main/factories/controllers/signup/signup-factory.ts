@@ -1,7 +1,7 @@
 import config from '../../../config/env'
 
 
-import { SignUpController } from '../../../../presentation/controllers/signup/signup-controller'
+import { SignUpController } from '../../../../presentation/controllers/login/signup/signup-controller'
 import { DbAddAcount } from '../../../../data/usecases/add-account/db-add-account'
 import { BcryptAdapter } from '../../../../infra/cryptography/bcrypter-adapter/bcrypt-adapter'
 import {  AccountMongoRepository } from '../../../../infra/db/mongodb/account/account-mongo-repository'
